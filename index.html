@@ -517,7 +517,7 @@
       const iconOn = document.getElementById('icon-sound-on');
       const iconOff = document.getElementById('icon-sound-off');
       
-      bgAudio.volume = 0.5;
+      bgAudio.volume = 0.25;
 
       const updateUI = () => {
         if (!bgAudio.paused) {
@@ -536,17 +536,29 @@
       // Force an initial update in case autoplay worked immediately
       updateUI();
 
-      // Explicitly request play on load to try and force it
-      const playPromise = bgAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(e => {
-          console.log('Autoplay blocked. Waiting for user interaction.');
-          // Fallback: wait for the first click anywhere to start
-          document.addEventListener('click', () => {
-            if (bgAudio.paused) bgAudio.play();
-          }, { once: true });
-        });
-      }
+      const tryPlayAudio = () => {
+        if (bgAudio.paused) {
+          const playPromise = bgAudio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              // Successfully started
+              document.removeEventListener('click', tryPlayAudio);
+              window.removeEventListener('scroll', tryPlayAudio);
+              window.removeEventListener('touchstart', tryPlayAudio);
+            }).catch(e => {
+              console.log('Autoplay blocked. Waiting for further interaction.');
+            });
+          }
+        }
+      };
+
+      // Explicitly request play on load
+      tryPlayAudio();
+
+      // Listen for scroll, click, or touch to start audio if blocked
+      document.addEventListener('click', tryPlayAudio, { once: true });
+      window.addEventListener('scroll', tryPlayAudio, { passive: true, once: true });
+      window.addEventListener('touchstart', tryPlayAudio, { passive: true, once: true });
 
       bgToggleBtn.addEventListener('click', (e) => {
         e.stopPropagation(); // prevent document click
