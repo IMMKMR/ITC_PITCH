@@ -1404,22 +1404,21 @@ footer p {
 
 /* Timeline Floating Card */
 .timeline-floating-card {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  width: calc(100% - 48px);
-  max-width: 400px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border);
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   transform: translateY(20px);
   opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   z-index: 10;
+}
+.timeline-floating-card:hover {
+  box-shadow: 0 16px 40px rgba(6, 47, 98, 0.12);
 }
 
 .timeline-entry.is-active .timeline-floating-card {
@@ -1441,21 +1440,6 @@ footer p {
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
-}
-
-@media (max-width: 768px) {
-  .timeline-floating-card {
-    position: relative;
-    bottom: auto;
-    right: auto;
-    width: 100%;
-    max-width: none;
-    margin-top: 16px;
-    border-radius: 8px;
-    background: var(--surface);
-    backdrop-filter: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  }
 }
 
 /* ---------- BRAND FILMS (One Film at a Time) ---------- */
