@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-  
+  if (!document.getElementById('yt-api-script')) {
+    const tag = document.createElement('script');
+    tag.id = 'yt-api-script';
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    if (firstScriptTag) firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    else document.head.appendChild(tag);
+  }
+
   // --- Scroll Reveal Animation ---
   const revealElements = document.querySelectorAll('.reveal');
 
@@ -218,10 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function resetAllFacades() {
     facades.forEach(facade => {
-      // Remove any iframe inside
+      // Remove any iframe or div inside
       const iframe = facade.querySelector('iframe');
       if (iframe) {
         iframe.remove();
+      }
+      const div = facade.querySelector('div[id^="yt-player-"]');
+      if (div) {
+        div.remove();
       }
       // Show thumbnail & button again
       const img = facade.querySelector('img');
@@ -251,22 +263,55 @@ document.addEventListener('DOMContentLoaded', () => {
       if (img) img.style.display = 'none';
       if (btn) btn.style.display = 'none';
 
-      // 3. Inject Iframe with autoplay=1
-      const iframe = document.createElement('iframe');
-      iframe.setAttribute('src', `https://www.youtube.com/embed/${vid}?autoplay=1`);
-      iframe.setAttribute('title', title);
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-      iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-      iframe.setAttribute('allowfullscreen', 'true');
-      iframe.style.position = 'absolute';
-      iframe.style.top = '0';
-      iframe.style.left = '0';
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.zIndex = '5';
-      
-      this.appendChild(iframe);
+      // 3. Inject Iframe using YT API
+      const playerId = 'yt-player-' + Date.now() + Math.floor(Math.random()*1000);
+      const playerDiv = document.createElement('div');
+      playerDiv.id = playerId;
+      playerDiv.style.position = 'absolute';
+      playerDiv.style.top = '0';
+      playerDiv.style.left = '0';
+      playerDiv.style.width = '100%';
+      playerDiv.style.height = '100%';
+      playerDiv.style.zIndex = '5';
+      this.appendChild(playerDiv);
+
+      if (window.YT && window.YT.Player) {
+        new YT.Player(playerId, {
+          videoId: vid,
+          playerVars: {
+            'autoplay': 1,
+            'rel': 0,
+            'enablejsapi': 1
+          },
+          events: {
+            'onStateChange': function(event) {
+              const audio = document.getElementById('bg-music');
+              if (!audio) return;
+              if (event.data === YT.PlayerState.PLAYING) {
+                if (!audio.paused) audio.pause();
+              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                if (audio.paused) audio.play().catch(e => {});
+              }
+            }
+          }
+        });
+      } else {
+        // Fallback if API hasn't loaded
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('src', `https://www.youtube.com/embed/${vid}?autoplay=1`);
+        iframe.setAttribute('title', title);
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        iframe.setAttribute('allowfullscreen', 'true');
+        iframe.style.position = 'absolute';
+        iframe.style.top = '0';
+        iframe.style.left = '0';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.zIndex = '5';
+        this.appendChild(iframe);
+      }
     });
   });
 
