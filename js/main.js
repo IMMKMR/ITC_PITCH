@@ -236,6 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // 1. Reset all other facades to stop their playback
       resetAllFacades();
 
+      // Pause background music if it is playing
+      const bgAudio = document.getElementById('bg-music');
+      if (bgAudio && !bgAudio.paused) {
+        bgAudio.pause();
+      }
+
       // 2. Hide thumbnail & button for this one
       const img = this.querySelector('img');
       const btn = this.querySelector('.yt-play-btn');
