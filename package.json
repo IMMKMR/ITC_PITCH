@@ -1,0 +1,11 @@
+{
+  "name": "covana-itc-microsite",
+  "version": "1.0.0",
+  "description": "Microsite for ITC Choupal Beej Brand Pitch",
+  "scripts": {
+    "start": "live-server ."
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
