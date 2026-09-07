@@ -472,6 +472,13 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 48px;
 }
 
+@media (max-width: 900px) {
+  .kv-grid .ig-card {
+    width: min(100%, 300px) !important;
+    margin: 0 auto;
+  }
+}
+
 .kv-card {
   position: relative;
   background: #fff;
@@ -1487,7 +1494,7 @@ footer p {
   .story-timeline__progress { right: auto; width: calc((100% - 10px) * var(--progress)); transition: width 80ms linear; }
   .story-timeline__nav-item { display: block; min-height: 0; padding-top: 15px; }
   .story-timeline__dot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); margin: 0; }
-  .story-timeline__nav-copy { display: none; }
+  .story-timeline__nav-copy { display: none !important; }
   .timeline-entry { grid-template-columns: 1fr; min-height: 70vh; padding: 60px 0; }
   .timeline-entry__meta { flex-direction: row; min-height: 0; margin-bottom: 20px; }
 }
